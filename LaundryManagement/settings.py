@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 import os
+import dj_database_url
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -25,13 +26,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-)xjryl6y#g+$4%=5msd4ixlfz7ix&r(ufbdz1k36texpc-v$us"
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-CORS_ALLOW_ALL_ORIGINS = True   
+ALLOWED_HOSTS = ['comfort-plus-backend.onrender.com', 'localhost', '127.0.0.1']
+
+CORS_ALLOWED_ORIGINS = [
+    'https://your-admin-ui.netlify.app',  # update after Netlify deploy
+]  
 
 # Application definition
 
@@ -46,6 +50,7 @@ INSTALLED_APPS = [
     "UserApp",
     "rest_framework",
     "rest_framework.authtoken",
+    'corsheaders',
 ]
 
 SIMPLE_JWT = {
@@ -92,15 +97,21 @@ WSGI_APPLICATION = "LaundryManagement.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": os.getenv("NAME"),
+#         "HOST": os.getenv("HOST"),
+#         "PORT": os.getenv("PORT"),
+#         "USER": os.getenv("USER"),
+#         "PASSWORD": os.getenv("PASSWORD"),
+#     }
+# }
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("NAME"),
-        "HOST": os.getenv("HOST"),
-        "PORT": os.getenv("PORT"),
-        "USER": os.getenv("USER"),
-        "PASSWORD": os.getenv("PASSWORD"),
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL'),
+        conn_max_age=600
+    )
 }
 
 
@@ -139,3 +150,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / 'staticfiles'
