@@ -34,7 +34,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['comfort-plus-backend.onrender.com', 'localhost', '127.0.0.1']
 
 CORS_ALLOWED_ORIGINS = [
-    'https://comfort-plus.netlify.app/',
+    'https://comfort-plus.netlify.app',
 ]  
 
 # Application definition
