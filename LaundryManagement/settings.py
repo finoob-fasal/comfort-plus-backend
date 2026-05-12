@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['comfort-plus-backend.onrender.com', 'localhost', '127.0.0.1', 
 
 CORS_ALLOWED_ORIGINS = [
     'https://comfort-plus.netlify.app',
+    'http://localhost:5173'
 ]  
 
 # Application definition
