@@ -154,7 +154,7 @@ def delete_service(request, id):
 # .....................view user..........................
 @api_view(["GET"])
 def view_users(request):
-    signup_users = User.objects.all()
+    signup_users = User.objects.filter(is_superuser=False, is_staff=False)
     users = []
 
     for user in signup_users:
