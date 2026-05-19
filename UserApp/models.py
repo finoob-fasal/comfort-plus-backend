@@ -41,28 +41,41 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=15, blank=True, null=True)
 
+# class Service_Booking(models.Model):
+
+    # user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    # full_name = models.CharField(max_length=100)
+    # phone = models.CharField(max_length=15)
+    # email = models.EmailField()
+    # street_address = models.TextField()
+    # city = models.CharField(max_length=100)
+    # zipcode = models.CharField(max_length=10)
+    # service = models.CharField(max_length=100)
+    # size = models.CharField(max_length=20, choices=[
+    #         ('small', 'Small'),
+    #         ('large', 'Large'),
+    #         ('others', 'Others')
+    #     ],
+    #     default='small'
+    # )
+    # date = models.DateField()
+    # time = models.CharField(max_length=50)
+    # Delivery_mode = models.CharField(max_length=10, choices=[('Normal', 'Normal'), ('Express', 'Express')],
+    #     default='Normal'
+    # )
+    # order_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+
 class Service_Booking(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     full_name = models.CharField(max_length=100)
-    phone = models.CharField(max_length=15)
+    phone = models.CharField(max_length=20)
     email = models.EmailField()
-    street_address = models.TextField()
+    street_address = models.CharField(max_length=200)
     city = models.CharField(max_length=100)
-    zipcode = models.CharField(max_length=10)
-    service = models.CharField(max_length=100)
-    size = models.CharField(max_length=20, choices=[
-            ('small', 'Small'),
-            ('large', 'Large'),
-            ('others', 'Others')
-        ],
-        default='small'
-    )
+    zipcode = models.CharField(max_length=20)
     date = models.DateField()
-    time = models.CharField(max_length=50)
-    Delivery_mode = models.CharField(max_length=10, choices=[('Normal', 'Normal'), ('Express', 'Express')],
-        default='Normal'
-    )
+    time = models.CharField(max_length=100)
     order_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
 class Message(models.Model):
@@ -72,19 +85,49 @@ class Message(models.Model):
     subject = models.CharField(max_length=200)
     message = models.TextField()
 
-
 class Order(models.Model):
+
+    checkout = models.ForeignKey(Service_Booking,to_field="order_id",on_delete=models.CASCADE,null=True,blank=True)
+    BAG_CHOICES = [
+        ('small', 'Small Bag'),
+        ('large', 'Large Bag'),
+    ]
+
+    DELIVERY_CHOICES = [
+        ('normal', 'Normal Delivery'),
+        ('express', 'Express Delivery'),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+
+    Bag_type = models.CharField(
+        max_length=20,
+        choices=BAG_CHOICES
+    )
+
+    quantity = models.PositiveIntegerField(default=1)
+
+    Delivery_Type = models.CharField(
+        max_length=20,
+        choices=DELIVERY_CHOICES
+    )
     STATUS_CHOICES = (
         ('PENDING', 'Pending'),
         ('SUCCESS', 'Success'),
         ('FAILED', 'Failed'),
     )
+    amount=models.IntegerField()
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # amount = models.IntegerField()
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    amount = models.IntegerField()
+    # # ✅ Stripe fields
+    # stripe_payment_intent = models.CharField(max_length=255, null=True, blank=True)
 
-    # ✅ Stripe fields
-    stripe_payment_intent = models.CharField(max_length=255, null=True, blank=True)
-
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
-    created_at = models.DateTimeField(auto_now_add=True)
+    # status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    # created_at = models.DateTimeField(auto_now_add=True)
+    

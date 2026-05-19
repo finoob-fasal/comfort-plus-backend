@@ -513,8 +513,8 @@ def place_order(request):
     raddress = request.data.get("street")
     rcity = request.data.get("city")
     rzipcode = request.data.get("zipcode")
-    rservice_type = request.data.get("service")
-    rsize = request.data.get("size")   # added size
+    # rservice_type = request.data.get("service")
+    # rsize = request.data.get("size")   # added size
     rdate = request.data.get("date")
     rtime = request.data.get("time")
 
@@ -527,11 +527,11 @@ def place_order(request):
         street_address=raddress,
         city=rcity,
         zipcode=rzipcode,
-        service=rservice_type,
-        size=rsize,          # added here
+        # service=rservice_type,
+        # size=rsize,          # added here
         date=rdate,
         time=rtime,
-        Delivery_mode="Normal"
+        # Delivery_mode="Normal"
     )
 
     return JsonResponse({"message": "Success"})
@@ -559,6 +559,53 @@ def view_order(request):
                 }
             )
         return JsonResponse(data,safe=False)
+
+
+@api_view(['POST'])
+def checkout(request):
+
+    bag_type = request.data.get("Bag_type")
+    quantity = request.data.get("quantity")
+    delivery_type = request.data.get("Delivery_Type")
+    amount = request.data.get("amount")
+
+    order = Order.objects.create(
+        user=request.user,
+        Bag_type=bag_type,
+        quantity=quantity,
+        Delivery_Type=delivery_type,
+        amount=amount
+    )
+
+    return Response({
+        "message": "Checkout Success",
+        "id": order.id,
+        "Bag_type": order.Bag_type,
+        "quantity": order.quantity,
+        "Delivery_Type": order.Delivery_Type,
+        "amount": order.amount
+    })
+# VIEW ORDER HISTORY 
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def view_order_history(request):
+
+    orders = Order.objects.filter(user=request.user).order_by("-created_at")
+    data = []
+
+    for order in orders:
+        data.append({
+            "service_type": order.service_type,
+            "bag_type": order.bag_type,
+            "date": order.created_at,
+            "amount": order.amount,
+        })
+
+    return Response({
+        "message": "Order history fetched successfully",
+        "orders": data
+    })
 
 #*******MESSAGE******
 
@@ -618,34 +665,64 @@ from rest_framework.response import Response
 from .models import Order
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_payment_intent(request):
 
     try:
 
-        amount = int(request.data.get("amount", 0))
+        bag_type = request.data.get("bag_type")
+        count = int(request.data.get("count", 1))
+        delivery_type = request.data.get("delivery_type")
 
-        amount = amount * 100
+        # Fixed rates
+        SMALL_BAG_PRICE = 100
+        LARGE_BAG_PRICE = 200
 
-        print("Amount:", amount)
+        EXPRESS_CHARGE = 50
+        NORMAL_CHARGE = 0
+
+        # Bag price
+        if bag_type == "small":
+            bag_price = SMALL_BAG_PRICE
+        elif bag_type == "large":
+            bag_price = LARGE_BAG_PRICE
+        else:
+            return Response({
+                "error": "Invalid bag type"
+            }, status=400)
+
+        # Delivery charge
+        if delivery_type == "express":
+            delivery_charge = EXPRESS_CHARGE
+        else:
+            delivery_charge = NORMAL_CHARGE
+
+        # Total calculation
+        total_amount = (bag_price * count) + delivery_charge
+
+        # Stripe uses paise
+        stripe_amount = total_amount * 100
+
+        print("Total:", total_amount)
 
         intent = stripe.PaymentIntent.create(
-            amount=amount,
+            amount=stripe_amount,
             currency="inr",
         )
 
-        print("Intent:", intent)
-
         order = Order.objects.create(
             user=request.user,
-            amount=amount,
+            amount=total_amount,
             stripe_payment_intent=intent.id,
             status="PENDING"
         )
 
         return Response({
-            "client_secret": intent.client_secret
+            "client_secret": intent.client_secret,
+            "total_amount": total_amount
         })
 
     except Exception as e:
@@ -655,6 +732,52 @@ def create_payment_intent(request):
         return Response({
             "error": str(e)
         }, status=500)
+# import stripe
+# from rest_framework.permissions import IsAuthenticated
+# from rest_framework.decorators import permission_classes
+# from django.conf import settings
+# from rest_framework.decorators import api_view
+# from rest_framework.response import Response
+# from .models import Order
+
+# stripe.api_key = settings.STRIPE_SECRET_KEY
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def create_payment_intent(request):
+
+#     try:
+
+#         amount = int(request.data.get("amount", 0))
+
+#         amount = amount * 100
+
+#         print("Amount:", amount)
+
+#         intent = stripe.PaymentIntent.create(
+#             amount=amount,
+#             currency="inr",
+#         )
+
+#         print("Intent:", intent)
+
+#         order = Order.objects.create(
+#             user=request.user,
+#             amount=amount,
+#             stripe_payment_intent=intent.id,
+#             status="PENDING"
+#         )
+
+#         return Response({
+#             "client_secret": intent.client_secret
+#         })
+
+#     except Exception as e:
+
+#         print("STRIPE ERROR:", str(e))
+
+#         return Response({
+#             "error": str(e)
+#         }, status=500)
 
 import stripe
 import json

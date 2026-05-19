@@ -55,6 +55,10 @@ urlpatterns = [
 
     path("place_order/",views.place_order,name="place_order"),
     path("view_order",views.view_order,name="view_order"),
+    path("order/",views.checkout,name="checkout"),
+    path("view_order_history/",views.view_order_history,name="view_order_history"),
+
+    
 
 #***********************MESSAGE**************************
 
@@ -66,10 +70,4 @@ urlpatterns = [
     path("stripe_webhook/",views.stripe_webhook,name="stripe_webhook")
 
 
-#*************************RESET PASSWORD****************************
-    # path("reset_password",views.reset_password,name="reset_password"),
-
-
-
-    
 ]
