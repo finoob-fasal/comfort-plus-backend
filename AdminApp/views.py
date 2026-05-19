@@ -163,7 +163,7 @@ def view_users(request):
                 "id": user.id,
                 "Name": user.username,
                 "Email": user.email,
-                "Phone": user.profile.Phone if hasattr(user, "profile") else None,
+                "Phone": user.profile.phone if hasattr(user, "profile") else None,
             }
         )
     return JsonResponse(users, safe=False)
