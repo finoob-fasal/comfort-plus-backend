@@ -122,6 +122,15 @@ class Order(models.Model):
         ('FAILED', 'Failed'),
     )
     amount=models.IntegerField()
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='PENDING'
+    )
+
+    def __str__(self):
+        return f"Order #{self.id} - {self.user} - {self.status}"
     # user = models.ForeignKey(User, on_delete=models.CASCADE)
     # amount = models.IntegerField()
 

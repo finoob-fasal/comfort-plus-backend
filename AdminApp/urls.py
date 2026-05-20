@@ -12,6 +12,7 @@ urlpatterns= [
     path('edit_service/<int:id>', views.edit_service, name='edit_service'),
     path('delete_service/<int:id>', views.delete_service, name='delete_service'),
 
+    path('view_u_order/', views.view_u_order, name='view_u_order'),
     path('view_orders/', views.view_orders, name='view_orders'),
     path('view_user_orders/<int:id>', views.view_user_orders, name='view_user_orders'),
     path('view_user_order/<int:id>', views.view_user_order, name='view_user_order'),
