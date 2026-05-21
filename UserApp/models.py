@@ -87,7 +87,14 @@ class Message(models.Model):
 
 class Order(models.Model):
 
-    checkout = models.ForeignKey(Service_Booking,to_field="order_id",on_delete=models.CASCADE,null=True,blank=True)
+    checkout = models.ForeignKey(
+        Service_Booking,
+        to_field="order_id",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+    real_amount=models.IntegerField()
     BAG_CHOICES = [
         ('small', 'Small Bag'),
         ('large', 'Large Bag'),
@@ -116,12 +123,16 @@ class Order(models.Model):
         max_length=20,
         choices=DELIVERY_CHOICES
     )
+
+    
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
     STATUS_CHOICES = (
         ('PENDING', 'Pending'),
         ('SUCCESS', 'Success'),
         ('FAILED', 'Failed'),
     )
-    amount=models.IntegerField()
 
     status = models.CharField(
         max_length=20,
@@ -129,8 +140,10 @@ class Order(models.Model):
         default='PENDING'
     )
 
-    def __str__(self):
-        return f"Order #{self.id} - {self.user} - {self.status}"
+
+    # def __str__(self):
+    #     return f"Order #{self.id} - {self.user} - {self.status}"
+    
     # user = models.ForeignKey(User, on_delete=models.CASCADE)
     # amount = models.IntegerField()
 

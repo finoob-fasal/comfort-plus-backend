@@ -575,7 +575,7 @@ def checkout(request):
         quantity=quantity,
         Delivery_Type=delivery_type,
         amount=amount
-    )
+        )
 
     return Response({
         "message": "Checkout Success",
