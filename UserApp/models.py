@@ -86,8 +86,7 @@ class Message(models.Model):
     message = models.TextField()
 
 class Order(models.Model):
-
-    checkout = models.ForeignKey(Service_Booking,to_field="order_id",on_delete=models.CASCADE,null=True,blank=True)
+    
     BAG_CHOICES = [
         ('small', 'Small Bag'),
         ('large', 'Large Bag'),
@@ -102,7 +101,7 @@ class Order(models.Model):
         User,
         on_delete=models.CASCADE,
         null=True,
-        blank=True
+        blank=True 
     )
 
     Bag_type = models.CharField(

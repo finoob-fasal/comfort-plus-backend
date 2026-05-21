@@ -562,6 +562,7 @@ def view_order(request):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def checkout(request):
 
     bag_type = request.data.get("Bag_type")
@@ -578,13 +579,10 @@ def checkout(request):
     )
 
     return Response({
-        "message": "Checkout Success",
-        "id": order.id,
-        "Bag_type": order.Bag_type,
-        "quantity": order.quantity,
-        "Delivery_Type": order.Delivery_Type,
-        "amount": order.amount
+        "message": "Order Created",
+        "order_id": order.id
     })
+
 # VIEW ORDER HISTORY 
 
 @api_view(["GET"])
