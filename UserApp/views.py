@@ -277,7 +277,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 from django.http import HttpResponse, JsonResponse
 import stripe
-from .models import Order, User
+from .models import Order, Order_payment, User
 from UserApp.models import  Profile,Service_Booking,Message
 from rest_framework.decorators import permission_classes,api_view
 from rest_framework.permissions import IsAuthenticated
@@ -567,14 +567,14 @@ def checkout(request):
     bag_type = request.data.get("Bag_type")
     quantity = request.data.get("quantity")
     delivery_type = request.data.get("Delivery_Type")
-    test_price = request.data.get("test_price")
+    price_ord = request.data.get("price_ord")
 
-    order = Order.objects.create(
+    order = Order_payment.objects.create(
         user=request.user,
         Bag_type=bag_type,
         quantity=quantity,
         Delivery_Type=delivery_type,
-        test_price=test_price
+        price_ord=price_ord
     )
 
     return Response({
@@ -583,7 +583,7 @@ def checkout(request):
         "Bag_type": order.Bag_type,
         "quantity": order.quantity,
         "Delivery_Type": order.Delivery_Type,
-        "test_price": order.test_price
+        "price_ord": order.price_ord
     })
 
 
@@ -593,14 +593,14 @@ def checkout(request):
 @permission_classes([IsAuthenticated])
 def view_order_history(request):
 
-    orders = Order.objects.filter(user=request.user).order_by("-created_at")
+    orders = Order_payment.objects.filter(user=request.user).order_by("-created_at")
     data = []
 
     for order in orders:
         data.append({
             "bag_type": order.Bag_type,
             "date": order.created_at,
-            "test_price": order.test_price
+            "price_ord": order.price_ord
         })
 
     return Response({

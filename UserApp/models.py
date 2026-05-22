@@ -141,6 +141,61 @@ class Order(models.Model):
     )
 
 
+class Order_payment(models.Model):
+    checkout_ord = models.ForeignKey(
+        Service_Booking,
+        to_field="order_id",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+    price_ord = models.IntegerField(default=0)
+
+    BAG_CHOICES = [
+        ('small', 'Small Bag'),
+        ('large', 'Large Bag'),
+    ]
+
+    DELIVERY_CHOICES = [
+        ('normal', 'Normal Delivery'),
+        ('express', 'Express Delivery'),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+
+    Bag_type = models.CharField(
+        max_length=20,
+        choices=BAG_CHOICES
+    )
+
+    quantity = models.PositiveIntegerField(default=1)
+
+    Delivery_Type = models.CharField(
+        max_length=20,
+        choices=DELIVERY_CHOICES
+    )
+
+    
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    STATUS_CHOICES = (
+        ('PENDING', 'Pending'),
+        ('SUCCESS', 'Success'),
+        ('FAILED', 'Failed'),
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='PENDING'
+    )
+
     # def __str__(self):
     #     return f"Order #{self.id} - {self.user} - {self.status}"
     
