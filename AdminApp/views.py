@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
 
 from AdminApp.models import Item_Price, Services, Staff
-from UserApp.models import Service_Booking
+from UserApp.models import Order, Service_Booking
 import json
 
 from rest_framework.decorators import api_view
@@ -186,6 +186,25 @@ def view_orders(request):
                 "service": i.service,
                 "date": i.date,
                 "time": i.time,
+            }
+        )
+    return JsonResponse(data, safe=False)
+
+@api_view(["GET"])
+def view_u_order(request):
+    order = Order.objects.filter()
+    data = []
+    for i in order:
+        data.append(
+            {
+                "id":       i.id,
+                "bag":      i.Bag_type,
+                "delv":     i.Delivery_Type,
+                "quantity": i.quantity,
+                "amount":   i.amount,
+                "status":   i.status,
+                "user":     i.user.get_full_name() if i.user else "Unknown",
+                "checkout": i.checkout_id,
             }
         )
     return JsonResponse(data, safe=False)
