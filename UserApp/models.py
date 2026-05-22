@@ -86,6 +86,7 @@ class Message(models.Model):
     message = models.TextField()
 
 class Order(models.Model):
+    
 
     checkout = models.ForeignKey(
         Service_Booking,
@@ -109,7 +110,7 @@ class Order(models.Model):
         User,
         on_delete=models.CASCADE,
         null=True,
-        blank=True
+        blank=True 
     )
 
     Bag_type = models.CharField(
