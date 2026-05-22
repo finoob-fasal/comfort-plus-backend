@@ -567,15 +567,15 @@ def checkout(request):
     bag_type = request.data.get("Bag_type")
     quantity = request.data.get("quantity")
     delivery_type = request.data.get("Delivery_Type")
-    amount = request.data.get("amount")
+    test_price = request.data.get("test_price")
 
     order = Order.objects.create(
         user=request.user,
         Bag_type=bag_type,
         quantity=quantity,
         Delivery_Type=delivery_type,
-        amount=amount
-        )
+        test_price=test_price
+    )
 
     return Response({
         "message": "Checkout Success",
@@ -583,9 +583,11 @@ def checkout(request):
         "Bag_type": order.Bag_type,
         "quantity": order.quantity,
         "Delivery_Type": order.Delivery_Type,
-        "amount": order.amount
+        "test_price": order.test_price
     })
-# VIEW ORDER HISTORY 
+
+
+# VIEW ORDER HISTORY
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
@@ -596,10 +598,9 @@ def view_order_history(request):
 
     for order in orders:
         data.append({
-            "service_type": order.service_type,
-            "bag_type": order.bag_type,
+            "bag_type": order.Bag_type,
             "date": order.created_at,
-            "amount": order.amount,
+            "test_price": order.test_price
         })
 
     return Response({

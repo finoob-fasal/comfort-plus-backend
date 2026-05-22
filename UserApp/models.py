@@ -94,7 +94,7 @@ class Order(models.Model):
         null=True,
         blank=True
     )
-    real_amount=models.IntegerField()
+    price = models.IntegerField(default=0)
     BAG_CHOICES = [
         ('small', 'Small Bag'),
         ('large', 'Large Bag'),
